@@ -1,15 +1,19 @@
 import React from 'react';
-import {SafeAreaView} from 'react-native';
+import { SafeAreaView } from 'react-native';
 
 import HeaderView from '@/components/atoms/HeaderView';
-import WeekItem from '@/components/atoms/WeekItem';
+import WeekItem from '@/components/molecules/WeekItem';
+import WeekItemList from '@/components/organisms/WeekItemList';
+import { CheckListProvider } from '@/context/CheckListProvider';
 
 function App() {
   return (
-    <SafeAreaView>
-      <HeaderView title="Checklists" />
-      <WeekItem />
-    </SafeAreaView>
+    <CheckListProvider>
+      <SafeAreaView>
+        <HeaderView title="Checklists" />
+        <WeekItemList />
+      </SafeAreaView>
+    </CheckListProvider>
   );
 }
 

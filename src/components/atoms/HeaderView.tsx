@@ -1,16 +1,16 @@
 import React from 'react';
-import {StyleProp, StyleSheet, Text, TextStyleIOS, View} from 'react-native';
-import {fontStyle} from '../../helpers/StylesHelpers';
+import { StyleProp, StyleSheet, Text, TextStyleIOS, View } from 'react-native';
+import { fontStyle } from '@/helpers/StylesHelpers';
 
 interface IHeaderProps {
   title: string;
   textStyle?: StyleProp<TextStyleIOS>;
 }
 
-function HeaderView({title, textStyle}: IHeaderProps) {
+function HeaderView({ title, textStyle }: IHeaderProps) {
   return (
     <View style={styles.HeaderContainer}>
-      <Text style={[fontStyle.NotoSans16, textStyle]}>{title}</Text>
+      <Text style={[styles.TextStyle, textStyle]}>{title}</Text>
     </View>
   );
 }
@@ -22,5 +22,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 60,
+  },
+  TextStyle: {
+    ...fontStyle.NotoSans16,
+    color: '#333333',
   },
 });
