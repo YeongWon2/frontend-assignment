@@ -55,6 +55,7 @@ function CheckListView() {
           .map((missingItem) => missingItem.id);
 
         deleteCheckList(missingIds);
+        Toast.hide();
       }
 
       setIsEdit(isEditButton);
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   EmptyCheckListStyle: {
-    flex: 0.5,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
