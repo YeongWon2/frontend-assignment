@@ -9,6 +9,13 @@ export const fontStyle = StyleSheet.create({
     lineHeight: 14.98,
     letterSpacing: 0.2,
   },
+  NotoSans13: {
+    fontFamily: 'Noto Sans',
+    fontWeight: '400',
+    fontSize: 13,
+    lineHeight: 18,
+    letterSpacing: 0.2,
+  },
   NotoSans14: {
     fontFamily: 'Noto Sans',
     fontWeight: '400',
@@ -35,5 +42,11 @@ export const fontStyle = StyleSheet.create({
     fontWeight: '700',
     fontSize: 18,
     lineHeight: 24.52,
+  },
+  NotoSans20: {
+    fontFamily: 'Noto Sans',
+    fontWeight: '700',
+    fontSize: 20,
+    lineHeight: 27.24,
   },
 });

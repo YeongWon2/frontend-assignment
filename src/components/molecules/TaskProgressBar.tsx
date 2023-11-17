@@ -10,7 +10,7 @@ interface ITeskProgressBarProps {
 }
 
 function TeskProgressBar({ width, totalCount = 0, progressing = 0 }: ITeskProgressBarProps) {
-  const progress = totalCount > 0 ? (progressing / totalCount) * 100 : 0;
+  const progress = totalCount > 0 ? Math.round((progressing / totalCount) * 100) : 0;
   const normalizedProgress = progress * 0.01;
 
   const title = `${progressing} of ${totalCount} completed`;

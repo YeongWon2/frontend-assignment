@@ -11,7 +11,7 @@ import React, {
 import CheckListJson from '@/assets/json/checklist_seeds.json';
 import uuid from 'react-native-uuid';
 
-type CheckListType = {
+export type CheckListType = {
   id: string;
   weekNumber: number;
   content: string;
@@ -19,13 +19,11 @@ type CheckListType = {
 };
 
 interface CheckListContextProps {
-  weekList: number[];
   checkListMap: Map<number, CheckListType[]>;
-  isEdit: boolean;
-  setIsEdit: Dispatch<SetStateAction<boolean>>;
   currentWeek: number;
   setCurrentWeek: Dispatch<SetStateAction<number>>;
   completeCheckList: (id: string, checked: boolean) => void;
+  deleteCheckList: (ids: string[]) => void;
 }
 
 const CheckListContext = createContext<CheckListContextProps | undefined>(undefined);
@@ -35,11 +33,8 @@ interface CheckListProviderProps {
 }
 
 const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
-  //week list data
-  const [weekList, setWeekList] = useState<number[]>([]);
   //check list data
   const [checkListMap, setCheckListMap] = useState<Map<number, CheckListType[]>>(new Map());
-  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [currentWeek, setCurrentWeek] = useState(0);
 
   const completeCheckList = useCallback(
@@ -64,6 +59,21 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
     [currentWeek, setCheckListMap],
   );
 
+  const deleteCheckList = useCallback(
+    (ids: string[]) => {
+      setCheckListMap((prevCheckListMap) => {
+        const currentWeekCheckList = prevCheckListMap.get(currentWeek) || [];
+
+        // 업데이트된 checkListMap 반환
+        return new Map(prevCheckListMap).set(
+          currentWeek,
+          currentWeekCheckList.filter((item) => !ids.includes(item.id)),
+        );
+      });
+    },
+    [currentWeek, setCheckListMap],
+  );
+
   //initial check list set
   const initCheckListMap = () => {
     const newCheckListMap = new Map();
@@ -80,9 +90,6 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
         newCheckListMap.set(weekNumber, [...newCheckListMap.get(weekNumber), checkItem]);
       } else {
         newCheckListMap.set(weekNumber, [checkItem]);
-
-        //weekNumber순으로 저장
-        setWeekList((prevWeek) => [...prevWeek, weekNumber]);
       }
     });
 
@@ -95,7 +102,7 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
 
   return (
     <CheckListContext.Provider
-      value={{ isEdit, setIsEdit, checkListMap, weekList, currentWeek, setCurrentWeek, completeCheckList }}
+      value={{ checkListMap, currentWeek, setCurrentWeek, completeCheckList, deleteCheckList }}
     >
       {children}
     </CheckListContext.Provider>

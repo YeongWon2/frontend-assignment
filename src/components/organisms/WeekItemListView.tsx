@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useRef, useState } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -14,30 +14,29 @@ import WeekItem from '@/components/molecules/WeekItem';
 
 const halfWidth = Dimensions.get('screen').width / 2;
 
+const weekList = Array.from({ length: 40 }, (_, index) => index + 1);
+
 interface WeekItemListViewProps {
   defaultSelectedWeek: number;
 }
 
 const WeekItemListView = ({ defaultSelectedWeek }: WeekItemListViewProps) => {
-  const { weekList, currentWeek, setCurrentWeek } = useCheckListStore();
-  const [weekItemWidth, setWeekItemWidth] = useState<number>(0);
   const flatListRef = useRef<FlatList>(null);
-  const initialScrollIndex = weekList.length > 0 ? weekList.indexOf(defaultSelectedWeek) : 0;
+  const initialScrollIndex = weekList.indexOf(defaultSelectedWeek);
+  const [weekItemWidth, setWeekItemWidth] = useState<number>(0);
+  const { currentWeek, setCurrentWeek } = useCheckListStore();
 
   const handleWeekItemLayout = useCallback((event: LayoutChangeEvent) => {
     setWeekItemWidth(event.nativeEvent.layout.width + 15);
   }, []);
 
-  const handleWeekPress = useCallback(
-    (weekNumber: number) => {
-      const index = weekList.indexOf(weekNumber);
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index,
-      });
-    },
-    [weekList],
-  );
+  const handleWeekPress = useCallback((weekNumber: number) => {
+    const index = weekList.indexOf(weekNumber);
+    flatListRef.current?.scrollToIndex({
+      animated: true,
+      index,
+    });
+  }, []);
 
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -50,41 +49,41 @@ const WeekItemListView = ({ defaultSelectedWeek }: WeekItemListViewProps) => {
 
       setCurrentWeek(visibleWeek);
     },
-    [setCurrentWeek, weekItemWidth, weekList],
+    [setCurrentWeek, weekItemWidth],
   );
 
-  return (
-    <View style={styles.WeekListContainer}>
-      {weekList.length > 0 && (
-        <FlatList
-          ref={flatListRef}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          decelerationRate="fast"
-          contentContainerStyle={{ paddingHorizontal: halfWidth - weekItemWidth / 2 }}
-          snapToInterval={weekItemWidth}
-          data={weekList}
-          keyExtractor={(item) => item.toString()}
-          getItemLayout={(_, index) => ({
-            length: weekItemWidth,
-            offset: weekItemWidth * index,
-            index,
-          })}
-          onScrollToIndexFailed={(info) => {
-            console.warn('onScrollToIndexFailed info: ', info);
-          }}
-          onScroll={handleScroll}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleWeekPress(item)}>
-              <WeekItem week={item} isActive={item === currentWeek} onLayout={handleWeekItemLayout} />
-            </TouchableOpacity>
-          )}
-          ItemSeparatorComponent={ItemSeparator}
-          initialScrollIndex={initialScrollIndex}
-        />
-      )}
-    </View>
-  );
+  const MemoizedFlatList = useMemo(() => {
+    return (
+      <FlatList
+        ref={flatListRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        decelerationRate="fast"
+        contentContainerStyle={{ paddingHorizontal: halfWidth - weekItemWidth / 2 }}
+        snapToInterval={weekItemWidth}
+        data={weekList}
+        keyExtractor={(item) => item.toString()}
+        getItemLayout={(_, index) => ({
+          length: weekItemWidth,
+          offset: weekItemWidth * index,
+          index,
+        })}
+        onScrollToIndexFailed={(info) => {
+          console.warn('onScrollToIndexFailed info: ', info);
+        }}
+        onScroll={handleScroll}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handleWeekPress(item)}>
+            <WeekItem week={item} isActive={item === currentWeek} onLayout={handleWeekItemLayout} />
+          </TouchableOpacity>
+        )}
+        ItemSeparatorComponent={ItemSeparator}
+        initialScrollIndex={initialScrollIndex}
+      />
+    );
+  }, [currentWeek, handleScroll, handleWeekItemLayout, handleWeekPress, initialScrollIndex, weekItemWidth]);
+
+  return <View style={styles.WeekListContainer}>{MemoizedFlatList}</View>;
 };
 
 export default memo(WeekItemListView);
