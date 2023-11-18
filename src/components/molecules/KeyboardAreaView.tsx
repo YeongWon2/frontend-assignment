@@ -11,9 +11,9 @@ const KeyboardAreaView: React.FunctionComponent<IKeyboardAreaViewProps> = ({ chi
       enabled={Platform.OS === 'ios'}
       behavior="padding"
       style={styles.KeyboardContainer}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={styles.ContentContainer}
     >
-      <TouchableWithoutFeedback style={styles.touchable}>{children}</TouchableWithoutFeedback>
+      <TouchableWithoutFeedback style={styles.Touchable}>{children}</TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
@@ -22,10 +22,10 @@ const styles = StyleSheet.create({
   KeyboardContainer: {
     flex: 1,
   },
-  contentContainer: {
+  ContentContainer: {
     flexGrow: 1,
   },
-  touchable: {
+  Touchable: {
     flex: 1,
   },
 });

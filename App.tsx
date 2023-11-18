@@ -6,6 +6,7 @@ import CheckListScreen from '@/screens/CheckListScreen';
 import { CheckListProvider } from '@/context/CheckListProvider';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { toastConfig } from '@/helpers/ToastHelpers';
+import KeyboardAreaView from '@/components/molecules/KeyboardAreaView';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -15,16 +16,18 @@ type StackParamList = {
 
 function App() {
   return (
-    <SafeAreaView style={styles.AppContainer}>
-      <CheckListProvider>
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{ contentStyle: { backgroundColor: '#FFFFFF' } }}>
-            <Stack.Screen name="Checklists" component={CheckListScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </CheckListProvider>
-      <Toast position="bottom" config={toastConfig} />
-    </SafeAreaView>
+    <KeyboardAreaView>
+      <SafeAreaView style={styles.AppContainer}>
+        <CheckListProvider>
+          <NavigationContainer>
+            <Stack.Navigator screenOptions={{ contentStyle: { backgroundColor: '#FFFFFF' } }}>
+              <Stack.Screen name="Checklists" component={CheckListScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </CheckListProvider>
+        <Toast position="bottom" config={toastConfig} />
+      </SafeAreaView>
+    </KeyboardAreaView>
   );
 }
 

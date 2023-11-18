@@ -20,8 +20,8 @@ export type CheckListType = {
 
 interface CheckListContextProps {
   checkListMap: Map<number, CheckListType[]>;
-  currentWeek: number;
-  setCurrentWeek: Dispatch<SetStateAction<number>>;
+  currentWeek?: number;
+  setCurrentWeek: Dispatch<SetStateAction<number | undefined>>;
   completeCheckList: (id: string, checked: boolean) => void;
   deleteCheckList: (ids: string[]) => void;
   createCheckList: (content: string) => void;
@@ -36,23 +36,23 @@ interface CheckListProviderProps {
 const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
   //check list data
   const [checkListMap, setCheckListMap] = useState<Map<number, CheckListType[]>>(new Map());
-  const [currentWeek, setCurrentWeek] = useState(0);
+  const [currentWeek, setCurrentWeek] = useState<number>();
 
   const createCheckList = useCallback(
     (content: string) => {
       setCheckListMap((prevCheckListMap) => {
         const updatedMap = new Map(prevCheckListMap);
-        const existingCheckList = updatedMap.get(currentWeek) || [];
+        const existingCheckList = updatedMap.get(currentWeek || 0) || [];
         const newCheckList: CheckListType = {
           id: uuid.v4().toString(),
-          weekNumber: currentWeek,
+          weekNumber: currentWeek || 0,
           checked: false,
           content,
         };
 
         existingCheckList.unshift(newCheckList);
 
-        updatedMap.set(currentWeek, existingCheckList);
+        updatedMap.set(currentWeek || 0, existingCheckList);
 
         return updatedMap;
       });
@@ -64,7 +64,7 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
     (id: string, checked: boolean) => {
       setCheckListMap((prevCheckListMap) => {
         const updatedMap = new Map(prevCheckListMap);
-        const existingCheckList = updatedMap.get(currentWeek) || [];
+        const existingCheckList = updatedMap.get(currentWeek || 0) || [];
         const itemIndex = existingCheckList.findIndex((item) => item.id === id);
 
         if (itemIndex !== -1) {
@@ -74,7 +74,7 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
           };
         }
 
-        updatedMap.set(currentWeek, existingCheckList);
+        updatedMap.set(currentWeek || 0, existingCheckList);
 
         return updatedMap;
       });
@@ -85,11 +85,11 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
   const deleteCheckList = useCallback(
     (ids: string[]) => {
       setCheckListMap((prevCheckListMap) => {
-        const currentWeekCheckList = prevCheckListMap.get(currentWeek) || [];
+        const currentWeekCheckList = prevCheckListMap.get(currentWeek || 0) || [];
 
         // 업데이트된 checkListMap 반환
         return new Map(prevCheckListMap).set(
-          currentWeek,
+          currentWeek || 0,
           currentWeekCheckList.filter((item) => !ids.includes(item.id)),
         );
       });

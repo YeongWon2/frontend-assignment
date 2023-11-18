@@ -90,7 +90,7 @@ export default memo(CreateCheckListButton);
 const styles = StyleSheet.create({
   FloatingButtonWrap: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,
     right: 20,
   },
   KeyboardAvoidingView: {

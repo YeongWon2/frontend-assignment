@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useCheckListStore } from '@/context/CheckListProvider';
 import WeekItem from '@/components/molecules/WeekItem';
+import _debounce from 'lodash/debounce';
 
 const halfWidth = Dimensions.get('screen').width / 2;
 
@@ -24,7 +25,8 @@ const WeekItemListView = ({ defaultSelectedWeek }: WeekItemListViewProps) => {
   const flatListRef = useRef<FlatList>(null);
   const initialScrollIndex = weekList.indexOf(defaultSelectedWeek);
   const [weekItemWidth, setWeekItemWidth] = useState<number>(0);
-  const { currentWeek, setCurrentWeek } = useCheckListStore();
+  const [week, setWeek] = useState<number>(defaultSelectedWeek);
+  const { setCurrentWeek } = useCheckListStore();
 
   const handleWeekItemLayout = useCallback((event: LayoutChangeEvent) => {
     setWeekItemWidth(event.nativeEvent.layout.width + 15);
@@ -47,10 +49,19 @@ const WeekItemListView = ({ defaultSelectedWeek }: WeekItemListViewProps) => {
 
       const visibleWeek = weekList[correctedIndex];
 
-      setCurrentWeek(visibleWeek);
+      setWeek(visibleWeek);
     },
-    [setCurrentWeek, weekItemWidth],
+    [weekItemWidth],
   );
+
+  const handleScrollEnd = useCallback(() => {
+    setCurrentWeek(undefined);
+    setCurrentWeek(week);
+  }, [setCurrentWeek, week]);
+
+  useEffect(() => {
+    setCurrentWeek(defaultSelectedWeek);
+  }, [defaultSelectedWeek, setCurrentWeek]);
 
   const MemoizedFlatList = useMemo(() => {
     return (
@@ -71,17 +82,18 @@ const WeekItemListView = ({ defaultSelectedWeek }: WeekItemListViewProps) => {
         onScrollToIndexFailed={(info) => {
           console.warn('onScrollToIndexFailed info: ', info);
         }}
+        onMomentumScrollEnd={_debounce(handleScrollEnd, 300)}
         onScroll={handleScroll}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleWeekPress(item)}>
-            <WeekItem week={item} isActive={item === currentWeek} onLayout={handleWeekItemLayout} />
+            <WeekItem week={item} isActive={item === week} onLayout={handleWeekItemLayout} />
           </TouchableOpacity>
         )}
         ItemSeparatorComponent={ItemSeparator}
         initialScrollIndex={initialScrollIndex}
       />
     );
-  }, [currentWeek, handleScroll, handleWeekItemLayout, handleWeekPress, initialScrollIndex, weekItemWidth]);
+  }, [weekItemWidth, handleScrollEnd, handleScroll, initialScrollIndex, week, handleWeekItemLayout, handleWeekPress]);
 
   return <View style={styles.WeekListContainer}>{MemoizedFlatList}</View>;
 };

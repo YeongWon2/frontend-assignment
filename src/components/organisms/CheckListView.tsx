@@ -8,8 +8,9 @@ import { useNavigation } from '@react-navigation/native';
 import CheckListHeaders from '@/components/organisms/CheckListHeaders';
 import Toast from 'react-native-toast-message';
 import CreateCheckListButton from '@/components/organisms/CreateCheckListButton';
-import { AnimatedCheckedIcon } from '../molecules/AnimatedCheckedIcon';
-import { AnimatedDeleteIcon } from '../molecules/AnimatedDeleteIcon';
+import { AnimatedCheckedIcon } from '@/components/molecules/AnimatedCheckedIcon';
+import { AnimatedDeleteIcon } from '@/components/molecules/AnimatedDeleteIcon';
+import Animated, { SlideInLeft, SlideInRight } from 'react-native-reanimated';
 
 const progressWidth = Dimensions.get('screen').width - 40;
 
@@ -18,6 +19,7 @@ function CheckListView() {
   const { checkListMap, currentWeek, completeCheckList, deleteCheckList } = useCheckListStore();
   const [checkList, setCheckList] = useState<CheckListType[]>([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [week, setWeek] = useState<number>();
 
   const totalCount = checkList.length;
   const progressing = checkList.reduce((acc, current) => {
@@ -34,7 +36,7 @@ function CheckListView() {
 
   const handleDeleteCheckList = useCallback(
     (id: string) => {
-      const originData = [...(checkListMap.get(currentWeek) || [])];
+      const originData = [...(checkListMap.get(currentWeek || 0) || [])];
       const filterCheckList = checkList.filter((item) => item.id !== id);
       setCheckList(filterCheckList);
       Toast.show({
@@ -50,7 +52,7 @@ function CheckListView() {
   const handleHeaderPress = useCallback(
     (isEditButton: boolean) => {
       if (!isEditButton) {
-        const currentWeekCheckList = checkListMap.get(currentWeek) || [];
+        const currentWeekCheckList = checkListMap.get(currentWeek || 0) || [];
         const missingIds = currentWeekCheckList
           .filter((weekItem) => !checkList.some((item) => item.id === weekItem.id))
           .map((missingItem) => missingItem.id);
@@ -64,8 +66,12 @@ function CheckListView() {
     [checkList, checkListMap, currentWeek, deleteCheckList],
   );
 
+  const handleAnimatedLayout = useCallback(() => {
+    setWeek(currentWeek);
+  }, [currentWeek]);
+
   useEffect(() => {
-    setCheckList([...(checkListMap.get(currentWeek) || [])]);
+    setCheckList([...(checkListMap.get(currentWeek || 0) || [])]);
   }, [checkListMap, currentWeek]);
 
   useEffect(() => {
@@ -84,37 +90,43 @@ function CheckListView() {
 
   return (
     <>
-      <View style={styles.CheckListViewContainer}>
-        {checkList.length > 0 ? (
-          <>
-            <TaskProgressBar width={progressWidth} progressing={progressing} totalCount={totalCount} />
-            <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.CheckListSwapView}>
-              {checkList?.map(({ content, id, checked }) => (
-                <View key={id} style={styles.CheckItemStyle}>
-                  <Pressable onPress={() => completeCheckList(id, true)}>
-                    <AnimatedCheckedIcon isVisible={!isEdit} checked={checked} />
-                  </Pressable>
-                  <Text
-                    style={[
-                      styles.CheckListTextStyle,
-                      { color: checked ? '#C4C4C4' : '#333', textDecorationLine: checked ? 'line-through' : 'none' },
-                    ]}
-                  >
-                    {content}
-                  </Text>
-                  <TouchableOpacity activeOpacity={0.7} onPress={() => handleDeleteCheckList(id)}>
-                    <AnimatedDeleteIcon isVisible={isEdit} />
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </ScrollView>
-          </>
-        ) : (
-          <View style={styles.EmptyCheckListStyle}>
-            <EmptyCheckListView title="No checklists" discription="Add checklists that should be checked weekly." />
-          </View>
-        )}
-      </View>
+      {currentWeek && (
+        <Animated.View
+          entering={!week ? undefined : week > currentWeek ? SlideInLeft : SlideInRight}
+          style={styles.CheckListViewContainer}
+          onLayout={handleAnimatedLayout}
+        >
+          {checkList.length > 0 ? (
+            <>
+              <TaskProgressBar width={progressWidth} progressing={progressing} totalCount={totalCount} />
+              <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.CheckListSwapView}>
+                {checkList?.map(({ content, id, checked }) => (
+                  <View key={id} style={styles.CheckItemStyle}>
+                    <Pressable onPress={() => completeCheckList(id, true)}>
+                      <AnimatedCheckedIcon isVisible={!isEdit} checked={checked} />
+                    </Pressable>
+                    <Text
+                      style={[
+                        styles.CheckListTextStyle,
+                        { color: checked ? '#C4C4C4' : '#333', textDecorationLine: checked ? 'line-through' : 'none' },
+                      ]}
+                    >
+                      {content}
+                    </Text>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => handleDeleteCheckList(id)}>
+                      <AnimatedDeleteIcon isVisible={isEdit} />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </ScrollView>
+            </>
+          ) : (
+            <View style={styles.EmptyCheckListStyle}>
+              <EmptyCheckListView title="No checklists" discription="Add checklists that should be checked weekly." />
+            </View>
+          )}
+        </Animated.View>
+      )}
       {!isEdit && <CreateCheckListButton />}
     </>
   );
@@ -145,7 +157,7 @@ const styles = StyleSheet.create({
   },
   EmptyCheckListStyle: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
 });

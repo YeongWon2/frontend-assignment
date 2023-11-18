@@ -25,7 +25,7 @@ export function AnimatedCheckedIcon({ checked, isVisible }: IAnimatedCheckedIcon
         { translateX: translateX.value },
         { scaleX: isVisible ? withTiming(1, { duration: 200 }) : withTiming(0, { duration: 200 }) },
       ],
-      width: isVisible ? withTiming(24, { duration: 200 }) : withTiming(0, { duration: 200 }),
+      width: isVisible ? withTiming(28, { duration: 200 }) : withTiming(0, { duration: 200 }),
     };
   });
 
