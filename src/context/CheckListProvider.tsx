@@ -24,6 +24,7 @@ interface CheckListContextProps {
   setCurrentWeek: Dispatch<SetStateAction<number>>;
   completeCheckList: (id: string, checked: boolean) => void;
   deleteCheckList: (ids: string[]) => void;
+  createCheckList: (content: string) => void;
 }
 
 const CheckListContext = createContext<CheckListContextProps | undefined>(undefined);
@@ -36,6 +37,28 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
   //check list data
   const [checkListMap, setCheckListMap] = useState<Map<number, CheckListType[]>>(new Map());
   const [currentWeek, setCurrentWeek] = useState(0);
+
+  const createCheckList = useCallback(
+    (content: string) => {
+      setCheckListMap((prevCheckListMap) => {
+        const updatedMap = new Map(prevCheckListMap);
+        const existingCheckList = updatedMap.get(currentWeek) || [];
+        const newCheckList: CheckListType = {
+          id: uuid.v4().toString(),
+          weekNumber: currentWeek,
+          checked: false,
+          content,
+        };
+
+        existingCheckList.unshift(newCheckList);
+
+        updatedMap.set(currentWeek, existingCheckList);
+
+        return updatedMap;
+      });
+    },
+    [currentWeek],
+  );
 
   const completeCheckList = useCallback(
     (id: string, checked: boolean) => {
@@ -82,7 +105,7 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
       const { weekNumber } = item;
       const checkItem = {
         ...item,
-        id: uuid.v4(),
+        id: uuid.v4().toString(),
         checked: false,
       };
 
@@ -102,7 +125,7 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
 
   return (
     <CheckListContext.Provider
-      value={{ checkListMap, currentWeek, setCurrentWeek, completeCheckList, deleteCheckList }}
+      value={{ checkListMap, currentWeek, setCurrentWeek, completeCheckList, deleteCheckList, createCheckList }}
     >
       {children}
     </CheckListContext.Provider>

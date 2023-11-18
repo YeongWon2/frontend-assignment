@@ -5,11 +5,11 @@ import CheckListView from '@/components/organisms/CheckListView';
 
 function CheckListScreen() {
   return (
-    <SafeAreaView>
-      <View style={styles.WeekViewBorderStyle}>
+    <SafeAreaView style={styles.CheckListScreenContainer}>
+      <View style={styles.WeekViewWrap}>
         <WeekItemListView defaultSelectedWeek={15} />
       </View>
-      <View>
+      <View style={styles.CheckListWrap}>
         <CheckListView />
       </View>
     </SafeAreaView>
@@ -19,5 +19,9 @@ function CheckListScreen() {
 export default CheckListScreen;
 
 const styles = StyleSheet.create({
-  WeekViewBorderStyle: { paddingBottom: 16, borderBottomWidth: 1, borderColor: '#F6F5F8' },
+  CheckListScreenContainer: {
+    flex: 1,
+  },
+  WeekViewWrap: { paddingBottom: 16, borderBottomWidth: 1, borderColor: '#F6F5F8' },
+  CheckListWrap: { flex: 1 },
 });

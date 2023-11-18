@@ -9,6 +9,7 @@ import EmptyCheckListView from '@/components/molecules/EmptyCheckListView';
 import { useNavigation } from '@react-navigation/native';
 import CheckListHeaders from '@/components/organisms/CheckListHeaders';
 import Toast from 'react-native-toast-message';
+import CreateCheckListButton from '@/components/organisms/CreateCheckListButton';
 
 const progressWidth = Dimensions.get('screen').width - 40;
 
@@ -33,7 +34,7 @@ function CheckListView() {
 
   const handleDeleteCheckList = useCallback(
     (id: string) => {
-      const originData = [...checkList];
+      const originData = [...(checkListMap.get(currentWeek) || [])];
       const filterCheckList = checkList.filter((item) => item.id !== id);
       setCheckList(filterCheckList);
       Toast.show({
@@ -43,7 +44,7 @@ function CheckListView() {
         onPress: () => handleUndo(originData),
       });
     },
-    [checkList, handleUndo],
+    [checkList, checkListMap, currentWeek, handleUndo],
   );
 
   const handleHeaderPress = useCallback(
@@ -78,50 +79,52 @@ function CheckListView() {
   }, [handleHeaderPress, navigation]);
 
   return (
-    <View style={styles.CheckListViewContainer}>
-      {checkList.length > 0 ? (
-        <>
-          <TaskProgressBar width={progressWidth} progressing={progressing} totalCount={totalCount} />
-          <ScrollView bounces={false} style={styles.CheckListSwapView}>
-            {checkList?.map(({ content, id, checked }) => (
-              <View key={id} style={styles.CheckItemStyle}>
-                {!isEdit && (
-                  <Pressable onPress={() => completeCheckList(id, true)}>
-                    <CheckedIcon isActive={checked} />
-                  </Pressable>
-                )}
-                <Text
-                  style={[
-                    styles.CheckListTextStyle,
-                    { color: checked ? '#C4C4C4' : '#333', textDecorationLine: checked ? 'line-through' : 'none' },
-                  ]}
-                >
-                  {content}
-                </Text>
-                {isEdit && (
-                  <Pressable onPress={() => handleDeleteCheckList(id)}>
-                    <DeleteIcon />
-                  </Pressable>
-                )}
-              </View>
-            ))}
-          </ScrollView>
-        </>
-      ) : (
-        <View style={styles.EmptyCheckListStyle}>
-          <EmptyCheckListView title="No checklists" discription="Add checklists that should be checked weekly." />
-        </View>
-      )}
-    </View>
+    <>
+      <View style={styles.CheckListViewContainer}>
+        {checkList.length > 0 ? (
+          <>
+            <TaskProgressBar width={progressWidth} progressing={progressing} totalCount={totalCount} />
+            <ScrollView bounces={false} style={styles.CheckListSwapView}>
+              {checkList?.map(({ content, id, checked }) => (
+                <View key={id} style={styles.CheckItemStyle}>
+                  {!isEdit && (
+                    <Pressable onPress={() => completeCheckList(id, true)}>
+                      <CheckedIcon isActive={checked} />
+                    </Pressable>
+                  )}
+                  <Text
+                    style={[
+                      styles.CheckListTextStyle,
+                      { color: checked ? '#C4C4C4' : '#333', textDecorationLine: checked ? 'line-through' : 'none' },
+                    ]}
+                  >
+                    {content}
+                  </Text>
+                  {isEdit && (
+                    <Pressable onPress={() => handleDeleteCheckList(id)}>
+                      <DeleteIcon />
+                    </Pressable>
+                  )}
+                </View>
+              ))}
+            </ScrollView>
+          </>
+        ) : (
+          <View style={styles.EmptyCheckListStyle}>
+            <EmptyCheckListView title="No checklists" discription="Add checklists that should be checked weekly." />
+          </View>
+        )}
+      </View>
+      {!isEdit && <CreateCheckListButton />}
+    </>
   );
 }
 export default CheckListView;
 
 const styles = StyleSheet.create({
   CheckListViewContainer: {
+    flex: 1,
     position: 'relative',
-    width: '100%',
-    height: '100%',
     paddingHorizontal: 20,
     paddingVertical: 28,
   },
