@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { fontStyle } from '@/helpers/StylesHelpers';
 import ActionHeaderView from '@/components/molecules/ActionHeaderView';
@@ -9,7 +9,7 @@ interface CheckListHeadersProps {
 }
 
 function CheckListHeaders({ onPress }: CheckListHeadersProps) {
-  const { checkListMap } = useCheckListStore();
+  const { checkListMap, currentWeek } = useCheckListStore();
   const [isEdit, setIsEdit] = useState(false);
 
   const handleEdit = useCallback(() => {
@@ -17,6 +17,10 @@ function CheckListHeaders({ onPress }: CheckListHeadersProps) {
 
     onPress(!isEdit);
   }, [isEdit, onPress]);
+
+  useEffect(() => {
+    setIsEdit(false);
+  }, [currentWeek]);
 
   return (
     <ActionHeaderView

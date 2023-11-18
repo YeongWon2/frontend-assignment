@@ -3,11 +3,11 @@ import ActiveChecked from '@/assets/svg/active_check.svg';
 import DisabledChecked from '@/assets/svg/disabled_check.svg';
 
 interface ICheckedIconProps {
-  isActive?: boolean;
+  checked?: boolean;
 }
 
-function CheckedIcon({ isActive }: ICheckedIconProps) {
-  return isActive ? <ActiveChecked /> : <DisabledChecked />;
+function CheckedIcon({ checked }: ICheckedIconProps) {
+  return checked ? <ActiveChecked /> : <DisabledChecked />;
 }
 
 export default CheckedIcon;

@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fontStyle } from '@/helpers/StylesHelpers';
 import TaskProgressBar from '@/components/molecules/TaskProgressBar';
 import { CheckListType, useCheckListStore } from '@/context/CheckListProvider';
-import CheckedIcon from '@/components/atoms/CheckedIcon';
-import DeleteIcon from '@/components/atoms/DeleteIcon';
 import EmptyCheckListView from '@/components/molecules/EmptyCheckListView';
 import { useNavigation } from '@react-navigation/native';
 import CheckListHeaders from '@/components/organisms/CheckListHeaders';
 import Toast from 'react-native-toast-message';
 import CreateCheckListButton from '@/components/organisms/CreateCheckListButton';
+import { AnimatedCheckedIcon } from '../molecules/AnimatedCheckedIcon';
+import { AnimatedDeleteIcon } from '../molecules/AnimatedDeleteIcon';
 
 const progressWidth = Dimensions.get('screen').width - 40;
 
@@ -78,6 +78,10 @@ function CheckListView() {
     });
   }, [handleHeaderPress, navigation]);
 
+  useEffect(() => {
+    setIsEdit(false);
+  }, [currentWeek]);
+
   return (
     <>
       <View style={styles.CheckListViewContainer}>
@@ -87,11 +91,9 @@ function CheckListView() {
             <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.CheckListSwapView}>
               {checkList?.map(({ content, id, checked }) => (
                 <View key={id} style={styles.CheckItemStyle}>
-                  {!isEdit && (
-                    <Pressable onPress={() => completeCheckList(id, true)}>
-                      <CheckedIcon isActive={checked} />
-                    </Pressable>
-                  )}
+                  <Pressable onPress={() => completeCheckList(id, true)}>
+                    <AnimatedCheckedIcon isVisible={!isEdit} checked={checked} />
+                  </Pressable>
                   <Text
                     style={[
                       styles.CheckListTextStyle,
@@ -100,11 +102,9 @@ function CheckListView() {
                   >
                     {content}
                   </Text>
-                  {isEdit && (
-                    <Pressable onPress={() => handleDeleteCheckList(id)}>
-                      <DeleteIcon />
-                    </Pressable>
-                  )}
+                  <TouchableOpacity activeOpacity={0.7} onPress={() => handleDeleteCheckList(id)}>
+                    <AnimatedDeleteIcon isVisible={isEdit} />
+                  </TouchableOpacity>
                 </View>
               ))}
             </ScrollView>
