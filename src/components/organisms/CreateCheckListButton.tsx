@@ -28,6 +28,7 @@ function CreateCheckListButton() {
 
   const keyboardWillHide = useCallback(() => {
     setIsActive(false);
+    setContent('');
   }, []);
 
   const handleChangeContent = useCallback((event: NativeSyntheticEvent<TextInputChangeEventData>) => {

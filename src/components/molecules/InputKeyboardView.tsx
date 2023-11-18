@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Dimensions, Keyboard, KeyboardEvent, LayoutChangeEvent, Pressable, View } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
+import KeyboardAreaView from './KeyboardAreaView';
 
 export interface IInputKeyboardViewProps {
   InputView: React.ReactNode;
@@ -36,24 +37,26 @@ function InputKeyboardView({ InputView }: IInputKeyboardViewProps) {
   }, [keyboardWillHide, keyboardWillShow]);
 
   return (
-    <>
-      <View onLayout={handleLayout}>{InputView}</View>
-      {visible && (
-        <FullWindowOverlay>
-          <Pressable
-            onPress={Keyboard.dismiss}
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              width: Dimensions.get('window').width,
-              height: Dimensions.get('window').height - keyboardHeight - inputHeight,
-              backgroundColor: 'rgba(0,0,0,0.4)',
-            }}
-          />
-        </FullWindowOverlay>
-      )}
-    </>
+    <KeyboardAreaView>
+      <>
+        <View onLayout={handleLayout}>{InputView}</View>
+        {visible && (
+          <FullWindowOverlay>
+            <Pressable
+              onPress={Keyboard.dismiss}
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                width: Dimensions.get('window').width,
+                height: Dimensions.get('window').height - keyboardHeight - inputHeight,
+                backgroundColor: 'rgba(0,0,0,0.4)',
+              }}
+            />
+          </FullWindowOverlay>
+        )}
+      </>
+    </KeyboardAreaView>
   );
 }
 

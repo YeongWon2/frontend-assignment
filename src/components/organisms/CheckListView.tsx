@@ -84,7 +84,7 @@ function CheckListView() {
         {checkList.length > 0 ? (
           <>
             <TaskProgressBar width={progressWidth} progressing={progressing} totalCount={totalCount} />
-            <ScrollView bounces={false} style={styles.CheckListSwapView}>
+            <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.CheckListSwapView}>
               {checkList?.map(({ content, id, checked }) => (
                 <View key={id} style={styles.CheckItemStyle}>
                   {!isEdit && (
