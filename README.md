@@ -1,79 +1,44 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 실행 방법
 
-# Getting Started
+1. `yarn install`
+2. `cd ios`
+3. `pod install`
+4. `yarn start`
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+# fronted-assignment 과제 시 마주쳤던 문제들 및 해결 과정
 
-## Step 1: Start the Metro Server
+## 1. 네비게이션 헤더의 Edit 버튼 처리
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+네비게이션 헤더에 Edit 버튼이 있어, 해당 버튼의 콜백 처리를 어떻게 할지 고민하다가 네비게이션 기본 옵션으로 동적으로 생성 후, 해당 콜백을 받게 처리하였습니다.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+## 2. Week Item 목록의 정렬 문제
 
-```bash
-# using npm
-npm start
+Week Item의 목록이 왼쪽에서부터 렌더링되어 문제가 발생했습니다. 이를 해결하기 위해 화면의 width 값의 반과 아이템 width의 반을 뺀 값으로 패딩 처리하여 중앙에서 시작되도록 조정하였습니다.
 
-# OR using Yarn
-yarn start
-```
+## 3. Context API를 사용한 전역 상태 관리
 
-## Step 2: Start your Application
+Context API를 활용하여 전역으로 상태를 관리했지만, 상태가 변경될 때마다 불필요한 렌더링이 발생하는 문제를 해결하기 위해 `useMemo`와 `memo`를 적극 활용하였습니다.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+## 4. CRUD 작업 시 타겟 식별 어려움
 
-### For Android
+샘플 JSON 데이터에는 기본적인 정보만 존재하여 CRUD 작업 시 타겟을 식별하는데 어려움이 있었습니다. 이를 위해 초기값과 생성 시마다 UUID를 활용하여 유니크한 식별자를 부여하였습니다.
 
-```bash
-# using npm
-npm run android
+## 5. Week 별 목록이 부족한 데이터
 
-# OR using Yarn
-yarn android
-```
+샘플 JSON 데이터에는 Week 별로 데이터가 부족한 상황에서 전체 목록을 불러와 처리하면 처리 속도가 느려질 우려가 있었습니다. 이를 해결하기 위해 `Map`을 활용하여 해당 Week의 목록만을 내려받아 렌더링하도록 처리했습니다.
 
-### For iOS
+## 6. Week 값 변경 시 슬라이드 애니메이션 이슈
 
-```bash
-# using npm
-npm run ios
+Week 값이 변경될 때마다 현재 Week보다 작은 경우에는 왼쪽, 큰 경우에는 오른쪽에서 슬라이드 애니메이션을 적용해야 하는데, 새로 렌더링되어야만 애니메이션이 적용되는 문제가 있었습니다. 이를 해결하기 위해 Week 값을 초기화한 후, 다시 설정하여 정상 동작하도록 처리했습니다.
 
-# OR using Yarn
-yarn ios
-```
+## 7. 키보드 이벤트에 따른 UI 겹침 현상
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+키보드 이벤트 발생 시 Input과 레이아웃이 겹치는 현상을 해결하기 위해 `KeyboardAvoidingView`에 스타일을 적용하여 키보드에 Input이 붙을 수 있게 처리했습니다.
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+# 특별히 신경쓴 부분
 
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+1. 폰트 스타일의 중복 사용을 최소화하기 위해 모듈화하여 재활용성을 높였습니다.
+2. 아토믹 디자인 패턴을 활용하여 컴포넌트를 분리하여 유지보수성을 향상시켰습니다.
+3. Context API를 활용하여 전역 상태 관리를 했으며, 불필요한 렌더링을 최소화하기 위해 `useMemo`와 `memo`를 활용했습니다.
+4. 함수의 단일 책임 원칙을 준수하여 가독성을 높이고, 코드를 모듈화하여 재사용성을 높였습니다.
+5. 네이밍 컨벤션을 일관되게 적용하여 코드 가독성을 향상시켰습니다.
