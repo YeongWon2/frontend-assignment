@@ -10,6 +10,7 @@ interface ITeskProgressBarProps {
 }
 
 function TeskProgressBar({ width, totalCount = 0, progressing = 0 }: ITeskProgressBarProps) {
+  //퍼센트 반올림 처리
   const progress = totalCount > 0 ? Math.round((progressing / totalCount) * 100) : 0;
   const normalizedProgress = progress * 0.01;
 

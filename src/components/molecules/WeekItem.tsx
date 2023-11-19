@@ -10,6 +10,7 @@ interface IWeekItemProps {
 }
 
 function WeekItem({ week = 0, isActive = false, onLayout }: IWeekItemProps) {
+  //active값에 대한 스타일 처리
   const textColor = isActive ? styles.ActiveColor : styles.DisabledColor;
 
   return (

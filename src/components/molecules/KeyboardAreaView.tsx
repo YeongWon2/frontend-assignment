@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 
 interface IKeyboardAreaViewProps {
   children: JSX.Element;
@@ -13,7 +13,7 @@ const KeyboardAreaView: React.FunctionComponent<IKeyboardAreaViewProps> = ({ chi
       style={styles.KeyboardContainer}
       contentContainerStyle={styles.ContentContainer}
     >
-      <TouchableWithoutFeedback style={styles.Touchable}>{children}</TouchableWithoutFeedback>
+      {children}
     </KeyboardAvoidingView>
   );
 };
@@ -24,9 +24,6 @@ const styles = StyleSheet.create({
   },
   ContentContainer: {
     flexGrow: 1,
-  },
-  Touchable: {
-    flex: 1,
   },
 });
 

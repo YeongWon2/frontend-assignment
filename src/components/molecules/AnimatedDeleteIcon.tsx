@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import DeleteIcon from '@/components/atoms/DeleteIcon';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
@@ -6,7 +6,7 @@ interface IAnimatedDeleteIconProps {
   isVisible: boolean;
 }
 
-export function AnimatedDeleteIcon({ isVisible }: IAnimatedDeleteIconProps) {
+function AnimatedDeleteIcon({ isVisible }: IAnimatedDeleteIconProps) {
   const translateX = useSharedValue(0);
 
   const animateIcon = useCallback(() => {
@@ -30,3 +30,5 @@ export function AnimatedDeleteIcon({ isVisible }: IAnimatedDeleteIconProps) {
 
   return <Animated.View style={animatedStyle}>{isVisible && <DeleteIcon />}</Animated.View>;
 }
+
+export default memo(AnimatedDeleteIcon);

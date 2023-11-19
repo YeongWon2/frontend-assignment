@@ -5,7 +5,7 @@ import { Pressable, Text, View } from 'react-native';
 import ReloadIcon from '@/components/atoms/ReloadIcon';
 import { BaseToastProps } from 'react-native-toast-message';
 
-function ActionButtonToast({ text1, onPress }: BaseToastProps) {
+function UndoButtonToast({ text1, onPress }: BaseToastProps) {
   return (
     <View style={styles.DefaultLayout}>
       <Text style={styles.ActionToastText1}>{text1}</Text>
@@ -19,7 +19,7 @@ function ActionButtonToast({ text1, onPress }: BaseToastProps) {
   );
 }
 
-export default ActionButtonToast;
+export default UndoButtonToast;
 
 const styles = StyleSheet.create({
   DefaultLayout: {

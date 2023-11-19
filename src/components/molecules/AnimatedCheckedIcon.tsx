@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import CheckedIcon from '@/components/atoms/CheckedIcon';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
@@ -7,7 +7,7 @@ interface IAnimatedCheckedIconProps {
   isVisible: boolean;
 }
 
-export function AnimatedCheckedIcon({ checked, isVisible }: IAnimatedCheckedIconProps) {
+function AnimatedCheckedIcon({ checked, isVisible }: IAnimatedCheckedIconProps) {
   const translateX = useSharedValue(0);
 
   const animateIcon = useCallback(() => {
@@ -31,3 +31,5 @@ export function AnimatedCheckedIcon({ checked, isVisible }: IAnimatedCheckedIcon
 
   return <Animated.View style={animatedStyle}>{isVisible && <CheckedIcon checked={checked} />}</Animated.View>;
 }
+
+export default memo(AnimatedCheckedIcon);

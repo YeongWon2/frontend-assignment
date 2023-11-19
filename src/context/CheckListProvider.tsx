@@ -38,6 +38,7 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
   const [checkListMap, setCheckListMap] = useState<Map<number, CheckListType[]>>(new Map());
   const [currentWeek, setCurrentWeek] = useState<number>();
 
+  //새로 생성된 checklist 처리
   const createCheckList = useCallback(
     (content: string) => {
       setCheckListMap((prevCheckListMap) => {
@@ -60,6 +61,7 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
     [currentWeek],
   );
 
+  //checked된 checklist 처리
   const completeCheckList = useCallback(
     (id: string, checked: boolean) => {
       setCheckListMap((prevCheckListMap) => {
@@ -97,7 +99,7 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
     [currentWeek, setCheckListMap],
   );
 
-  //initial check list set
+  //json checklist 기준으로 초기값 저장
   const initCheckListMap = () => {
     const newCheckListMap = new Map();
 
@@ -132,6 +134,7 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
   );
 };
 
+//전역으로 상태 처리를 위해 hooks 처리
 const useCheckListStore = () => {
   const context = useContext(CheckListContext);
 
