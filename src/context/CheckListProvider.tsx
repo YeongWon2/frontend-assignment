@@ -23,6 +23,7 @@ interface CheckListContextProps {
   currentWeek?: number;
   setCurrentWeek: Dispatch<SetStateAction<number | undefined>>;
   completeCheckList: (id: string, checked: boolean) => void;
+  updateCheckList: (id: string, content: string) => void;
   deleteCheckList: (ids: string[]) => void;
   createCheckList: (content: string) => void;
 }
@@ -52,6 +53,29 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
         };
 
         existingCheckList.unshift(newCheckList);
+
+        updatedMap.set(currentWeek || 0, existingCheckList);
+
+        return updatedMap;
+      });
+    },
+    [currentWeek],
+  );
+
+  //update checklist 처리
+  const updateCheckList = useCallback(
+    (id: string, content: string) => {
+      setCheckListMap((prevCheckListMap) => {
+        const updatedMap = new Map(prevCheckListMap);
+        const existingCheckList = updatedMap.get(currentWeek || 0) || [];
+        const itemIndex = existingCheckList.findIndex((item) => item.id === id);
+
+        if (itemIndex !== -1) {
+          existingCheckList[itemIndex] = {
+            ...existingCheckList[itemIndex],
+            content,
+          };
+        }
 
         updatedMap.set(currentWeek || 0, existingCheckList);
 
@@ -127,7 +151,15 @@ const CheckListProvider: React.FC<CheckListProviderProps> = ({ children }) => {
 
   return (
     <CheckListContext.Provider
-      value={{ checkListMap, currentWeek, setCurrentWeek, completeCheckList, deleteCheckList, createCheckList }}
+      value={{
+        checkListMap,
+        currentWeek,
+        setCurrentWeek,
+        completeCheckList,
+        deleteCheckList,
+        createCheckList,
+        updateCheckList,
+      }}
     >
       {children}
     </CheckListContext.Provider>

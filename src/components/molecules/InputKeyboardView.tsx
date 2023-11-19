@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
-import { Dimensions, Keyboard, KeyboardEvent, LayoutChangeEvent, Pressable, View } from 'react-native';
+import { Dimensions, Keyboard, KeyboardEvent, LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 
 export interface IInputKeyboardViewProps {
@@ -37,7 +37,9 @@ function InputKeyboardView({ InputView }: IInputKeyboardViewProps) {
 
   return (
     <>
-      <View onLayout={handleLayout}>{InputView}</View>
+      <View onLayout={handleLayout} style={styles.InputContainer}>
+        {InputView}
+      </View>
       {visible && (
         <FullWindowOverlay>
           <Pressable
@@ -58,3 +60,12 @@ function InputKeyboardView({ InputView }: IInputKeyboardViewProps) {
 }
 
 export default memo(InputKeyboardView);
+
+const styles = StyleSheet.create({
+  InputContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: Dimensions.get('screen').width,
+  },
+});

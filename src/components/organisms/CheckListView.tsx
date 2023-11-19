@@ -11,6 +11,7 @@ import CreateCheckListButton from '@/components/organisms/CreateCheckListButton'
 import AnimatedCheckedIcon from '@/components/molecules/AnimatedCheckedIcon';
 import AnimatedDeleteIcon from '@/components/molecules/AnimatedDeleteIcon';
 import Animated, { SlideInLeft, SlideInRight } from 'react-native-reanimated';
+import KeyboardInputContent from './KeyboardInputContent';
 
 const progressWidth = Dimensions.get('screen').width - 40;
 
@@ -20,6 +21,11 @@ function CheckListView() {
   const [checkList, setCheckList] = useState<CheckListType[]>([]);
   const [isEdit, setIsEdit] = useState(false);
   const [week, setWeek] = useState<number>();
+  const [updateContent, setUpdateContent] = useState({
+    visible: false,
+    id: '',
+    content: '',
+  });
   //checklist의 totalcount
   const totalCount = checkList.length;
   //checklist의 checked count 계산
@@ -35,6 +41,19 @@ function CheckListView() {
     setCheckList(originData);
     Toast.hide();
   }, []);
+
+  //content 클릭시 이벤트
+  const handleUpdateContent = useCallback(
+    ({ id, content, visible }: { id: string; content: string; visible: boolean }) => {
+      setUpdateContent({
+        ...updateContent,
+        id,
+        content,
+        visible,
+      });
+    },
+    [updateContent],
+  );
 
   //복사본 checklist를 delete처리
   const handleDeleteCheckList = useCallback(
@@ -109,20 +128,25 @@ function CheckListView() {
           const { id, checked, content }: CheckListType = item;
           return (
             <View key={id} style={styles.CheckItemStyle}>
-              <Pressable onPress={() => completeCheckList(id, true)}>
+              <Pressable onPress={() => completeCheckList(id, !checked)}>
                 <AnimatedCheckedIcon isVisible={!isEdit} checked={checked} />
               </Pressable>
-              <Text
-                style={[
-                  styles.CheckListTextStyle,
-                  {
-                    color: checked ? '#C4C4C4' : '#333',
-                    textDecorationLine: checked ? 'line-through' : 'none',
-                  },
-                ]}
+              <Pressable
+                onPress={() => handleUpdateContent({ id, content, visible: true })}
+                style={styles.CheckListTextWrap}
               >
-                {content}
-              </Text>
+                <Text
+                  style={[
+                    fontStyle.NotoSans14,
+                    {
+                      color: checked ? '#C4C4C4' : '#333',
+                      textDecorationLine: checked ? 'line-through' : 'none',
+                    },
+                  ]}
+                >
+                  {content}
+                </Text>
+              </Pressable>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleDeleteCheckList(id)}>
                 <AnimatedDeleteIcon isVisible={isEdit} />
               </TouchableOpacity>
@@ -133,7 +157,7 @@ function CheckListView() {
         style={styles.CheckListSwapView}
       />
     );
-  }, [checkList, completeCheckList, handleDeleteCheckList, isEdit]);
+  }, [checkList, completeCheckList, handleDeleteCheckList, handleUpdateContent, isEdit]);
 
   return (
     <>
@@ -149,7 +173,16 @@ function CheckListView() {
           {MemoizedFlatList}
         </Animated.View>
       )}
-      {!isEdit && <CreateCheckListButton />}
+      {!isEdit && !updateContent.visible && <CreateCheckListButton />}
+      {!isEdit && updateContent.visible && (
+        <KeyboardInputContent
+          type="update"
+          id={updateContent.id}
+          content={updateContent.content}
+          isVisible={updateContent.visible}
+          onHide={() => handleUpdateContent({ id: '', content: '', visible: false })}
+        />
+      )}
     </>
   );
 }
@@ -179,8 +212,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
-  CheckListTextStyle: {
-    ...fontStyle.NotoSans14,
+  CheckListTextWrap: {
     flex: 1,
     marginHorizontal: 12,
     alignSelf: 'center',
