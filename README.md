@@ -45,4 +45,4 @@ Week 값이 변경될 때마다 현재 Week보다 작은 경우에는 왼쪽, �
 
 # 실행영상
 
-<img src="src/assets/gif/video.gif" width="500" height="300">
+![프로젝트 GIF](src/assets/gif/video.gif)
